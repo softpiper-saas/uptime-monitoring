@@ -90,23 +90,53 @@ export const checkService = async (target: MonitorTarget) => {
     .where(eq(serviceStates.id, target.id));
 };
 
-export const startMonitoring = () => {
-  const targets = [
-    ...config.servers,
-    ...config.applications,
-    ...config.databases,
-    ...config.sslCertificates,
-    ...config.backups,
-  ];
+let monitorInterval: NodeJS.Timeout | null = null;
 
-  logger.info(`Starting monitoring for ${targets.length} targets...`);
+export const startMonitoring = async () => {
+  await reloadMonitors();
+};
+
+export const reloadMonitors = async () => {
+  // Stop existing interval
+  if (monitorInterval) {
+    clearInterval(monitorInterval);
+  }
+
+  // Fetch targets from DB
+  const services = await db.select().from(serviceStates);
+  
+  // Map DB records to MonitorTarget
+  const targets: MonitorTarget[] = services.map(s => ({
+    id: s.id,
+    name: s.name,
+    type: s.type as any, // Cast to specific type union
+    host: s.host || undefined,
+    url: s.url || undefined,
+    port: s.port || undefined,
+    method: s.method || undefined,
+    expectedStatusCode: s.expectedStatusCode || undefined,
+    warningDays: s.warningDays || undefined,
+    criticalDays: s.criticalDays || undefined,
+    access_key: s.accessKey || undefined,
+    secret_key: s.secretKey || undefined,
+    prefix: s.prefix || undefined,
+    bucket: s.bucket || undefined,
+    maxBackupAgeHours: s.maxBackupAgeHours || undefined,
+    database: s.database || undefined,
+    username: s.username || undefined,
+    password: s.password || undefined,
+    connectionString: s.connectionString || undefined,
+    timeout: s.timeout || 5000,
+  }));
+
+  logger.info(`Starting monitoring for ${targets.length} targets from DB...`);
 
   // Run immediately
   targets.forEach(checkService);
 
   // Schedule
-  cron.schedule(`*/${config.checkIntervalMinutes} * * * *`, () => {
+  monitorInterval = setInterval(() => {
     logger.info("Running scheduled checks...");
     targets.forEach(checkService);
-  });
+  }, config.checkIntervalMinutes * 60 * 1000);
 };

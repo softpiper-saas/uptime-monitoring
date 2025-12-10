@@ -14,6 +14,8 @@ const envSchema = z.object({
   DATABASE_TIMEOUT_MS: z.string().default("5000"),
   SSL_TIMEOUT_MS: z.string().default("10000"),
   BACKUP_TIMEOUT_MS: z.string().default("10000"),
+  ADMIN_USERNAME: z.string().default("admin"),
+  ADMIN_PASSWORD: z.string().default("admin123"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
