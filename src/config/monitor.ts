@@ -403,13 +403,4 @@ export const config = {
       timeout: 10000,
     },
   ] as MonitorTarget[],
-
-  discordWebhookUrl: env.DISCORD_WEBHOOK_URL,
-
-  checkIntervalMinutes: parseInt(env.CHECK_INTERVAL_MINUTES),
-  pingTimeout: parseInt(env.PING_TIMEOUT_MS),
-  httpTimeout: parseInt(env.HTTP_TIMEOUT_MS),
-  databaseTimeout: parseInt(env.DATABASE_TIMEOUT_MS),
-  sslTimeout: parseInt(env.SSL_TIMEOUT_MS),
-  backupTimeout: parseInt(env.BACKUP_TIMEOUT_MS),
 };

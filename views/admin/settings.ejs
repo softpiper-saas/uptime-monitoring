@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 { margin: 0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #374151; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .description {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #3b82f6; }
+        .btn-secondary { background: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>System Settings</h1>
+            <a href="/admin/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+
+        <form action="/admin/settings" method="POST">
+            <% settings.forEach(function(setting) { %>
+                <div class="form-group">
+                    <label for="<%= setting.key %>"><%= setting.label %></label>
+                    
+                    <% if (setting.type === 'number') { %>
+                        <input id="<%= setting.key %>" 
+                               type="number" 
+                               name="<%= setting.key %>" 
+                               value="<%= values[setting.key] %>">
+                    <% } else if (setting.type === 'password') { %>
+                        <input id="<%= setting.key %>" 
+                               type="password" 
+                               name="<%= setting.key %>" 
+                               value="<%= values[setting.key] %>">
+                    <% } else { %>
+                        <input id="<%= setting.key %>" 
+                               type="text" 
+                               name="<%= setting.key %>" 
+                               value="<%= values[setting.key] %>">
+                    <% } %>
+                    
+                    <% if (setting.description) { %>
+                        <p class="description"><%= setting.description %></p>
+                    <% } %>
+                </div>
+            <% }); %>
+
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

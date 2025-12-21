@@ -6,6 +6,7 @@ import { config, MonitorTarget } from "../config/monitor";
 import { checkPing, checkHttp, checkSsl, checkDatabase, checkBackup, CheckResult } from "./checkers";
 import { sendDiscordNotification } from "./notifications";
 import { logger } from "../utils/logger";
+import { SettingsService, SETTINGS_KEYS } from "./settings";
 
 const getChecker = (type: MonitorTarget["type"]) => {
   switch (type) {
@@ -135,8 +136,9 @@ export const reloadMonitors = async () => {
   targets.forEach(checkService);
 
   // Schedule
+  const checkIntervalMinutes = parseInt(await SettingsService.get(SETTINGS_KEYS.CHECK_INTERVAL_MINUTES));
   monitorInterval = setInterval(() => {
     logger.info("Running scheduled checks...");
     targets.forEach(checkService);
-  }, config.checkIntervalMinutes * 60 * 1000);
+  }, checkIntervalMinutes * 60 * 1000);
 };

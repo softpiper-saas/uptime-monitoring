@@ -5,6 +5,7 @@ import { db } from "../db";
 import { serviceStates } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { reloadMonitors } from "../services/monitor";
+import { SettingsService, SETTINGS_DEFINITIONS } from "../services/settings";
 
 const router = express.Router();
 
@@ -126,6 +127,28 @@ router.post("/services/:id/delete", requireAuth, async (req, res) => {
   await reloadMonitors();
   
   res.redirect("/admin/dashboard");
+});
+  
+
+
+// Settings Page
+router.get("/settings", requireAuth, async (req, res) => {
+  const currentSettings = await SettingsService.getSettings();
+  res.render("admin/settings", { 
+    settings: SETTINGS_DEFINITIONS,
+    values: currentSettings 
+  });
+});
+
+// Update Settings
+router.post("/settings", requireAuth, async (req, res) => {
+  const newSettings = req.body;
+  await SettingsService.updateAll(newSettings);
+  
+  // Reload monitors to pick up changes (like interval)
+  await reloadMonitors();
+  
+  res.redirect("/admin/settings");
 });
 
 export default router;

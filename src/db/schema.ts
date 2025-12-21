@@ -31,3 +31,8 @@ export const serviceStates = pgTable("service_states", {
   totalChecks: integer("total_checks").default(0).notNull(),
   uptime: real("uptime").default(100.0).notNull(),
 });
+
+export const settings = pgTable("settings", {
+  key: text("key").primaryKey(),
+  value: text("value"),
+});
