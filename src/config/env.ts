@@ -5,7 +5,7 @@ dotenv.config();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  PORT: z.string().default("3000"),
+  PORT: z.string().default("4000"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   DISCORD_WEBHOOK_URL: z.string().optional(),
   CHECK_INTERVAL_MINUTES: z.string().default("5"),
